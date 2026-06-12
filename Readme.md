@@ -77,7 +77,6 @@ src/
 
 ```bash
 git clone https://github.com/arunjo96/MERN-AUTH-CLIENT.git
-
 ```
 
 ### Install Dependencies
