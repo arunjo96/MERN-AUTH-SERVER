@@ -53,8 +53,7 @@ src/
 │
 ├── middleware/
 │   ├── authMiddleware.js
-│   ├── rateLimitMiddleware.js
-│   └── blacklistMiddleware.js
+│   ├── errorHandler.js
 │
 ├── models/
 │   └── User.js
@@ -68,7 +67,7 @@ src/
 │   └── templates/
 │       └── resetPasswordTemplate.js
 │
-└── server.js
+└── index.js
 
 ---
 
