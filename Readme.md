@@ -1,7 +1,8 @@
 # MERN Authentication System 🔐
 
-A secure authentication and user management REST API built with Node.js, Express.js, MongoDB Atlas, JWT Authentication, and Nodemailer.
+A secure authentication and user management REST API built with Node.js, Express.js, MongoDB Atlas, JWT Authentication, Nodemailer, and Redis.
 
+---
 
 ## Features
 
@@ -14,6 +15,8 @@ A secure authentication and user management REST API built with Node.js, Express
 - Profile Management
 - Password Hashing using bcryptjs
 - MongoDB Atlas Integration
+- Redis Rate Limiting (Login protection)
+- Redis Token Blacklisting (Logout security)
 
 ---
 
@@ -29,6 +32,7 @@ A secure authentication and user management REST API built with Node.js, Express
 - JWT (jsonwebtoken)
 - bcryptjs
 - crypto
+- Redis
 
 ### Email Service
 - Nodemailer
@@ -40,12 +44,17 @@ A secure authentication and user management REST API built with Node.js, Express
 ```bash
 src/
 │
+├── config/
+│   ├── db.js
+│   ├── redis.js
+│
 ├── controllers/
 │   └── authController.js
 │
 ├── middleware/
 │   ├── authMiddleware.js
-│   └── errorHandler.js
+│   ├── rateLimitMiddleware.js
+│   └── blacklistMiddleware.js
 │
 ├── models/
 │   └── User.js
@@ -59,11 +68,7 @@ src/
 │   └── templates/
 │       └── resetPasswordTemplate.js
 │
-├── config/
-│   └── db.js
-│
 └── server.js
-```
 
 ---
 

@@ -5,9 +5,13 @@ import connectDB from "./src/config/Db.js";
 import http from "http";
 import errorHandler from "./src/middleware/errorHandler.js";
 import authRouter from "./src/routes/authRoutes.js";
+import redisClient from "./src/config/redis.js";
 
 
 connectDB();
+
+
+
 
 const app = express();
 

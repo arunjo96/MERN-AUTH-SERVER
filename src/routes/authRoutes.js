@@ -6,6 +6,7 @@ import {
   resetPassword,
   getProfile,
   updateProfile,
+  logout,
 } from "../controllers/authController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -13,11 +14,14 @@ const authRouter = Router();
 
 authRouter.post("/register", register);
 
+
 authRouter.post("/login", login);
 
 authRouter.post("/forgot-password", forgotPassword);
 
 authRouter.post("/reset-password/:token", resetPassword);
+
+authRouter.post("/logout", protect, logout);
 
 authRouter.get("/profile", protect, getProfile);
 

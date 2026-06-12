@@ -3,6 +3,7 @@ import generateToken from "../utils/generateToken.js";
 import crypto from "crypto";
 import sendEmail from "../utils/sendMail.js";
 import resetPasswordTemplate from "../utils/templates/resetPasswordTemplate.js";
+import redisClient from "../config/redis.js";
 
 
 export const register = async (req, res) => {
@@ -50,14 +51,31 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const key = `login_attempt:${email}`;
+
+    const attempts = await redisClient.get(key);
+
+    if (Number(attempts) >= 3) {
+      return res.status(429).json({
+        status: "Error",
+        message: "Too many login attempts. Please try again after 2 minutes",
+      });
+    }
+
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.comparePassword(password))) {
+      await redisClient.incr(key);
+
+      await redisClient.expire(key, 120);
+
       return res.status(401).json({
         status: "Error",
         message: "Invalid email or password",
       });
     }
+
+    await redisClient.del(key);
 
     const token = generateToken({ id: user._id });
 
@@ -75,7 +93,6 @@ export const login = async (req, res) => {
     });
   }
 };
-
 
 export const forgotPassword = async (req, res) => {
   try {
@@ -216,6 +233,26 @@ export const updateProfile = async (req, res) => {
       status: "Success",
       message: "Profile updated successfully",
       user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Error",
+      message: error.message || "Server error",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    const token = req.token;
+
+    await redisClient.set(`blacklist:${token}`, "revoked", {
+      EX: 86400,
+    });
+
+    res.status(200).json({
+      status: "Success",
+      message: "Logged out successfully",
     });
   } catch (error) {
     res.status(500).json({
